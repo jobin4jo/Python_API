@@ -22,3 +22,7 @@ class UserRegistration (BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class loginrequest(BaseModel):
+    name: str
+    password: str

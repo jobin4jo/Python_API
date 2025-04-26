@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 # import models
 import database,schemas,models
-from schemas import UserRegistration,Token
-from crud import get_user_by_username, create_user
+from schemas import UserRegistration,loginrequest
+from crud import get_user_by_username, create_user,verify_password
 from auth import  create_access_token,decode_access_token
 # models.Base.metadata.create_all(bind=database.engine)
 
@@ -43,10 +43,11 @@ def register(user: UserRegistration, db: Session = Depends(get_db)):
     create_user(db, user)
     return {"message": "User created"}
 
-@app.post("/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = get_user(form_data.username)
-    if not user or not verify_password(form_data.password, user.hashed_password):
+@app.post("/login")
+def login(request:loginrequest,db: Session = Depends(get_db)):
+    user = get_user_by_username(db,request.name)
+    if not user or not verify_password(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    access_token = create_access_token(data={"sub": user.username})
+    access_token = create_access_token(data={"sub": user.name})
     return {"access_token": access_token, "token_type": "bearer"}
+
