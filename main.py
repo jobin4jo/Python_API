@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException,UploadFile
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
@@ -69,6 +69,12 @@ def login(request:loginrequest,db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     access_token = create_access_token(data={"sub": user.name})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/uploadfile")
+async def uploadfile(file:UploadFile):
+    response = await file.read()
+    print(file.file)
+
 
 app.include_router(v1_router, prefix="/api/v1")
 app.include_router(v2_router, prefix="/api/v2")

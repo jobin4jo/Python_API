@@ -10,3 +10,12 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
+
+class UploadedFile(Base):
+    __tablename__ = "uploaded_files"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    filename = Column(String, index=True)
+    content_type = Column(String)
+    size = Column(Integer)
+    user_id = Column(Integer) 
